@@ -12,24 +12,18 @@ var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-exports.default = function () {
+exports.default = function (_ref) {
+  var t = _ref.types;
+
   return {
     visitor: {
       Program: function Program(path, state) {
-        if (state.opts.strict === false) return;
-
         var node = path.node;
 
 
-        for (var i in node.directives.length) {
-          var directive = node.directives[i];
-
-          if (directive.value.value === "use strict") {
-            return;
-          }
+        if (t.isIdentifier(node.tag, { name: 'graphql' })) {
+          return compile(node.quasi);
         }
-
-        path.unshiftContainer("directives", t.directive(t.directiveLiteral("use strict")));
       }
     }
   };

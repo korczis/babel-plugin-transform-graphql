@@ -75,25 +75,15 @@ function compile(node) {
   ]))
 }
 
-export default function () {
+export default function ({ types: t }) {
   return {
     visitor: {
       Program(path, state) {
-        if (state.opts.strict === false) return;
-
         let {node} = path;
 
-        for (let i in node.directives.length) {
-          const directive = node.directives[i];
-
-          if (directive.value.value === "use strict") {
-            return;
-          }
+        if (t.isIdentifier(node.tag, {name: 'graphql'})) {
+          return compile(node.quasi)
         }
-
-        path.unshiftContainer("directives",
-          t.directive(t.directiveLiteral("use strict"))
-        );
       }
     }
   };
